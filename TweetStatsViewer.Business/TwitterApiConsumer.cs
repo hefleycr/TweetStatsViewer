@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
 using Tweetinvi;
 using Tweetinvi.Events.V2;
 using Tweetinvi.Models;
@@ -40,7 +40,9 @@ namespace TweetStatsViewer.Business
 
         private void HandleTweetReceived(object sender, TweetV2ReceivedEventArgs args)
         {
-            _tweetProcessor.ProcessTweet(args.Tweet.Text);
+            var urls = args.Tweet.Entities.Urls?.Select(r => r.ExpandedUrl);
+            var hashtags = args.Tweet.Entities.Hashtags?.Select(r => r.Tag);
+            _tweetProcessor.ProcessTweet(args.Tweet.Text, urls, hashtags);
         }
     }
 }

@@ -11,16 +11,24 @@ namespace TweetStatsViewer.Tests
     public class StatsPresenterTests
     {
         private StatsPresenter _underTest;
-        private Mock<ITweetDataProvider> _mockDataProvider = new Mock<ITweetDataProvider>();
-        private Mock<IDisplayHandler> _mockDisplayHandler = new Mock<IDisplayHandler>();
+        private readonly Mock<ITweetDataProvider> _mockDataProvider = new Mock<ITweetDataProvider>();
+        private readonly Mock<IDisplayHandler> _mockDisplayHandler = new Mock<IDisplayHandler>();
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            TweetDataSingleton.Instance.TotalNumberOfTweets = 1;
+            _mockDataProvider.Setup(r => r.GetData()).Returns(TweetDataSingleton.Instance);
+            _mockDataProvider.Setup(r => r.GetTopEmojisForDisplay()).Returns(new Dictionary<string, int>());
+            _mockDataProvider.Setup(r => r.GetTopDomainsForDisplay()).Returns(new Dictionary<string, int>());
+            _mockDataProvider.Setup(r => r.GetTopHashtagsForDisplay()).Returns(new Dictionary<string, int>());
+            _mockDataProvider.Setup(r => r.GetErrorsForDisplay()).Returns(new List<string>());
+        }
 
         [TestMethod]
         public void GivenTweetCountOne_WritingMultipleLinesToOutput()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.NumberOfTweetsReceived = 1;
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 
             //Act
@@ -34,10 +42,7 @@ namespace TweetStatsViewer.Tests
         public void GivenTweetCountZeroNoErrors_WritingOneLineToOutput()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.NumberOfTweetsReceived = 0;
-            data.Errors = new List<string>();
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
+            TweetDataSingleton.Instance.TotalNumberOfTweets = 0;
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 
             //Act
@@ -51,10 +56,8 @@ namespace TweetStatsViewer.Tests
         public void GivenTweetCountZeroOneError_WritingTwoLinesToOutput()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.NumberOfTweetsReceived = 0;
-            data.Errors = new List<string>() { "Error" };
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
+            TweetDataSingleton.Instance.TotalNumberOfTweets = 0;
+            _mockDataProvider.Setup(r => r.GetErrorsForDisplay()).Returns(new List<string>() { { "Error" } });
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 
             //Act
@@ -68,10 +71,7 @@ namespace TweetStatsViewer.Tests
         public void GivenEmojiCountOne_WritingEmojiTable()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.NumberOfTweetsReceived = 1;
-            data.EmojiCounts = new Dictionary<string, int> { { "smiley", 1 } };
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
+            _mockDataProvider.Setup(r => r.GetTopEmojisForDisplay()).Returns(new Dictionary<string, int>() { { "smiley", 1 } });
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 
             //Act
@@ -79,6 +79,34 @@ namespace TweetStatsViewer.Tests
 
             //Assert
             _mockDisplayHandler.Verify(mock => mock.WriteLine(It.IsRegex(".*Top.*Emojis.*")), Times.Once());
+        }
+
+        [TestMethod]
+        public void GivenDomainCountOne_WritingDomainsTable()
+        {
+            //Arrange
+            _mockDataProvider.Setup(r => r.GetTopDomainsForDisplay()).Returns(new Dictionary<string, int>() { { "jha.com", 1 } });
+            _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
+
+            //Act
+            _underTest.Present();
+
+            //Assert
+            _mockDisplayHandler.Verify(mock => mock.WriteLine(It.IsRegex(".*Top.*Domains.*")), Times.Once());
+        }
+
+        [TestMethod]
+        public void GivenHashtagCountOne_WritingHashtagsTable()
+        {
+            //Arrange
+            _mockDataProvider.Setup(r => r.GetTopHashtagsForDisplay()).Returns(new Dictionary<string, int>() { { "JHARocks", 1 } });
+            _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
+
+            //Act
+            _underTest.Present();
+
+            //Assert
+            _mockDisplayHandler.Verify(mock => mock.WriteLine(It.IsRegex(".*Top.*Hashtags.*")), Times.Once());
         }
     }
 }

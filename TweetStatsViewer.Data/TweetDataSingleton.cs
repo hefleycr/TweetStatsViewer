@@ -14,13 +14,27 @@ namespace TweetStatsViewer.Data
 
         public int AverageTweetsPerSecond { get; set; }
 
-        public int NumberOfTweetsReceived { get; set; }
+        public int TotalNumberOfTweets { get; set; }
 
-        public int NumberOfTweetsWithEmojisReceived { get; set; }
+        public int NumberOfTweetsWithEmojis { get; set; }
 
-        public IDictionary<string, int> EmojiCounts { get; set; }
+        public int PercentOfTweetsWithEmojis { get; set; }
+
+        public int NumberOfTweetsWithUrls { get; set; }
+
+        public int PercentOfTweetsWithUrls { get; set; }
+
+        public int NumberOfTweetsWithImageUrls { get; set; }
+
+        public int PercentOfTweetsWithImageUrls { get; set; }
 
         public ICollection<Emoji> EmojiLibrary { get; set; }
+
+        public IDictionary<string, int> TopEmojis { get; set; }
+
+        public IDictionary<string, int> TopDomains { get; set; }
+
+        public IDictionary<string, int> TopHashtags { get; set; }
 
         public ICollection<string> Errors { get; set; }
 
@@ -41,7 +55,9 @@ namespace TweetStatsViewer.Data
         private TweetDataSingleton()
         {
             InstanceCreatedAtUtc = DateTime.UtcNow;
-            EmojiCounts = new Dictionary<string, int>();
+            TopEmojis = new Dictionary<string, int>();
+            TopDomains = new Dictionary<string, int>();
+            TopHashtags = new Dictionary<string, int>();
             Errors = new List<string>();
         }
     }

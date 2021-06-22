@@ -25,11 +25,11 @@ namespace TweetStatsViewer.Tests
             _underTest = new ReceivedTweetProcessor(_mockDataProvider.Object);
 
             //Act
-            _underTest.ProcessTweet("Test tweet message text \U00012345.");
-            _underTest.ProcessTweet("Test tweet message text \U00012345.");
+            _underTest.ProcessTweet("Test tweet message text \U00012345.", null, null);
+            _underTest.ProcessTweet("Test tweet message text \U00012345.", null, null);
 
             //Assert
-            Assert.IsTrue(data.EmojiCounts.Count > 0 && data.EmojiCounts["smiley"] == 2);
+            Assert.IsTrue(data.TopEmojis.Count > 0 && data.TopEmojis["smiley"] == 2);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace TweetStatsViewer.Tests
             _underTest = new ReceivedTweetProcessor(_mockDataProvider.Object);
 
             //Act
-            _underTest.ProcessTweet("Test tweet message text.");
+            _underTest.ProcessTweet("Test tweet message text.", null, null);
 
             //Assert
             Assert.IsTrue(data.Errors.Count > 0 && data.Errors.First() == "Emoji lookup has not been loaded.");
