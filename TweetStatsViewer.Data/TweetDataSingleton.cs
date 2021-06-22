@@ -18,9 +18,11 @@ namespace TweetStatsViewer.Data
 
         public int NumberOfTweetsWithEmojisReceived { get; set; }
 
-        public Dictionary<string, int> EmojiCounts { get; set; }
+        public IDictionary<string, int> EmojiCounts { get; set; }
 
         public ICollection<Emoji> EmojiLibrary { get; set; }
+
+        public ICollection<string> Errors { get; set; }
 
         private static readonly TweetDataSingleton instance = new TweetDataSingleton();
 
@@ -40,6 +42,7 @@ namespace TweetStatsViewer.Data
         {
             InstanceCreatedAtUtc = DateTime.UtcNow;
             EmojiCounts = new Dictionary<string, int>();
+            Errors = new List<string>();
         }
     }
 }

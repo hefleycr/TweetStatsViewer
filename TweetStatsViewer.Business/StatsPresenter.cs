@@ -52,6 +52,11 @@ namespace TweetStatsViewer.Business
                 _displayHandler.WriteLine("");
                 _displayHandler.WriteLine("Press enter to close.");
             }
+
+            foreach (var error in data.Errors)
+            {
+                _displayHandler.WriteLine($"Error: {error}");
+            }
         }
     }
 }

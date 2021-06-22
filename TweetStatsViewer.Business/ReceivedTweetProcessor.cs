@@ -17,30 +17,44 @@ namespace TweetStatsViewer.Business
         public void ProcessTweet(string text)
         {
             var data = _dataProvider.GetData();
-            var timeSpan = DateTime.UtcNow - data.InstanceCreatedAtUtc;
-            data.NumberOfTweetsReceived++;
-            data.AverageTweetsPerSecond = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalSeconds);
-            data.AverageTweetsPerMinute = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalMinutes);
-            data.AverageTweetsPerHour = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalHours);
-
-            var emojis = data.EmojiLibrary;
-
-            foreach (var emoji in emojis.Where(r => int.TryParse(r.Unified, System.Globalization.NumberStyles.HexNumber, null, out _)))
+            try
             {
-                int value = int.Parse(emoji.Unified, System.Globalization.NumberStyles.HexNumber);
-                string result = char.ConvertFromUtf32(value).ToString();
-                if (Regex.IsMatch(text, result))
+                var timeSpan = DateTime.UtcNow - data.InstanceCreatedAtUtc;
+                data.NumberOfTweetsReceived++;
+                data.AverageTweetsPerSecond = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalSeconds);
+                data.AverageTweetsPerMinute = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalMinutes);
+                data.AverageTweetsPerHour = (int)Math.Round(data.NumberOfTweetsReceived / timeSpan.TotalHours);
+
+                var emojis = data.EmojiLibrary;
+
+                if (emojis == null)
                 {
-                    data.NumberOfTweetsWithEmojisReceived++;
-                    if (data.EmojiCounts.ContainsKey(emoji.Short_name))
+                    data.Errors.Add("Emoji lookup has not been loaded.");
+                }
+                else
+                {
+                    foreach (var emoji in emojis.Where(r => int.TryParse(r.Unified, System.Globalization.NumberStyles.HexNumber, null, out _)))
                     {
-                        data.EmojiCounts[emoji.Short_name]++;
-                    }
-                    else
-                    {
-                        data.EmojiCounts.Add(emoji.Short_name, 1);
+                        int value = int.Parse(emoji.Unified, System.Globalization.NumberStyles.HexNumber);
+                        string result = char.ConvertFromUtf32(value).ToString();
+                        if (Regex.IsMatch(text, result))
+                        {
+                            data.NumberOfTweetsWithEmojisReceived++;
+                            if (data.EmojiCounts.ContainsKey(emoji.Short_name))
+                            {
+                                data.EmojiCounts[emoji.Short_name]++;
+                            }
+                            else
+                            {
+                                data.EmojiCounts.Add(emoji.Short_name, 1);
+                            }
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+                data.Errors.Add("Unknown error occurred processing tweet.");
             }
         }
     }
