@@ -18,6 +18,10 @@ namespace TweetStatsViewer.Tests
         public void Initialize()
         {
             _mockDataProvider.Setup(r => r.EmojiLibrary()).Returns(new List<Emoji>() { new Emoji { Unified = _unified_value, Short_name = "smiley" } });
+            _mockDataProvider.Setup(r => r.TotalNumberOfTweets()).Returns(1);
+            _mockDataProvider.Setup(r => r.NumberOfTweetsWithEmojis()).Returns(1);
+            _mockDataProvider.Setup(r => r.NumberOfTweetsWithUrls()).Returns(1);
+            _mockDataProvider.Setup(r => r.NumberOfTweetsWithImages()).Returns(1);
         }
 
         [TestMethod]
@@ -42,11 +46,13 @@ namespace TweetStatsViewer.Tests
 
             //Act
             _underTest.ProcessTweet("Test tweet message text.", new string[] { "https://jha.com" }, null);
-            _underTest.ProcessTweet("Test tweet message text.", new string[] { "https://jha.com" }, null);
+            _underTest.ProcessTweet("Test tweet message text.", new string[] { "https://instagram.com" }, null);
 
             //Assert
             _mockDataProvider.Verify(r => r.AddDomain(It.IsAny<string>()), Times.Exactly(2));
             _mockDataProvider.Verify(r => r.AddHashtag(It.IsAny<string>()), Times.Never());
+            _mockDataProvider.Verify(r => r.SetPercentOfTweetsWithImages(It.IsAny<decimal>()), Times.Once());
+            _mockDataProvider.Verify(r => r.SetPercentOfTweetsWithUrls(It.IsAny<decimal>()), Times.Exactly(2));
         }
 
         [TestMethod]

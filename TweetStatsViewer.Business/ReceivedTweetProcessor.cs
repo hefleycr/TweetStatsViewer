@@ -77,9 +77,13 @@ namespace TweetStatsViewer.Business
                     _dataProvider.SetPercentOfTweetsWithEmojis(_dataProvider.NumberOfTweetsWithEmojis() / (decimal)_dataProvider.TotalNumberOfTweets() * 100);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+#if DEBUG
+                _dataProvider.AddError(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
+#else
                 _dataProvider.AddError("Unknown error occurred processing tweet.");
+#endif
             }
         }
     }

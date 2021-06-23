@@ -28,29 +28,40 @@ namespace TweetStatsViewer.Business
 
         public void Present()
         {
-            _displayHandler.Clear();
-            if (_dataProvider.TotalNumberOfTweets() == 0)
+            try
             {
-                _displayHandler.WriteLine("Initializing connection to sample stream...");
-            }
-            else
-            {
-                _displayHandler.WriteLine($"Total number of tweets: {_dataProvider.TotalNumberOfTweets()}");
-                _displayHandler.WriteLine($"Tweets per hour: {_dataProvider.AverageTweetsPerHour()}");
-                _displayHandler.WriteLine($"Tweets per minute: {_dataProvider.AverageTweetsPerMinute()}");
-                _displayHandler.WriteLine($"Tweets per second: {_dataProvider.AverageTweetsPerSecond()}");
-                _displayHandler.WriteLine($"Percent of tweets with emojis: {Math.Round(_dataProvider.PercentOfTweetsWithEmojis() * 100) / 100m}");
-                _displayHandler.WriteLine($"Percent of tweets with urls: {Math.Round(_dataProvider.PercentOfTweetsWithUrls() * 100) / 100m}");
-                _displayHandler.WriteLine($"Percent of tweets with images: {Math.Round(_dataProvider.PercentOfTweetsWithImages() * 100) / 100m}");
-                DisplayList(_dataProvider.GetTopEmojisForDisplay(), "Emojis");
-                DisplayList(_dataProvider.GetTopDomainsForDisplay(), "Domains");
-                DisplayList(_dataProvider.GetTopHashtagsForDisplay(), "Hashtags");
-                _displayHandler.WriteLine("Press enter to close.");
-            }
+                _displayHandler.Clear();
+                if (_dataProvider.TotalNumberOfTweets() == 0)
+                {
+                    _displayHandler.WriteLine("Initializing connection to sample stream...");
+                }
+                else
+                {
+                    _displayHandler.WriteLine($"Total number of tweets: {_dataProvider.TotalNumberOfTweets()}");
+                    _displayHandler.WriteLine($"Tweets per hour: {_dataProvider.AverageTweetsPerHour()}");
+                    _displayHandler.WriteLine($"Tweets per minute: {_dataProvider.AverageTweetsPerMinute()}");
+                    _displayHandler.WriteLine($"Tweets per second: {_dataProvider.AverageTweetsPerSecond()}");
+                    _displayHandler.WriteLine($"Percent of tweets with emojis: {Math.Round(_dataProvider.PercentOfTweetsWithEmojis() * 100) / 100m}");
+                    _displayHandler.WriteLine($"Percent of tweets with urls: {Math.Round(_dataProvider.PercentOfTweetsWithUrls() * 100) / 100m}");
+                    _displayHandler.WriteLine($"Percent of tweets with images: {Math.Round(_dataProvider.PercentOfTweetsWithImages() * 100) / 100m}");
+                    DisplayList(_dataProvider.GetTopEmojisForDisplay(), "Emojis");
+                    DisplayList(_dataProvider.GetTopDomainsForDisplay(), "Domains");
+                    DisplayList(_dataProvider.GetTopHashtagsForDisplay(), "Hashtags");
+                    _displayHandler.WriteLine("Press enter to close.");
+                }
 
-            foreach (var error in _dataProvider.GetErrorsForDisplay())
+                foreach (var error in _dataProvider.GetErrorsForDisplay())
+                {
+                    _displayHandler.WriteLine($"Error: {error}");
+                }
+            }
+            catch (Exception ex)
             {
-                _displayHandler.WriteLine($"Error: {error}");
+#if DEBUG
+                _dataProvider.AddError(ex.InnerException != null ? ex.InnerException.Message : ex.Message);
+#else
+                _dataProvider.AddError("Unknown error occurred displaying statistics.");
+#endif
             }
         }
 
