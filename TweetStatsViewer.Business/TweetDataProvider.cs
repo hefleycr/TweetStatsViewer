@@ -23,9 +23,9 @@ namespace TweetStatsViewer.Business
         public int AverageTweetsPerHour() => _tweetData.AverageTweetsPerHour;
         public int AverageTweetsPerMinute() => _tweetData.AverageTweetsPerMinute;
         public int AverageTweetsPerSecond() => _tweetData.AverageTweetsPerSecond;
-        public int PercentOfTweetsWithEmojis() => _tweetData.PercentOfTweetsWithEmojis;
-        public int PercentOfTweetsWithImages() => _tweetData.PercentOfTweetsWithImageUrls;
-        public int PercentOfTweetsWithUrls() => _tweetData.PercentOfTweetsWithUrls;
+        public decimal PercentOfTweetsWithEmojis() => _tweetData.PercentOfTweetsWithEmojis;
+        public decimal PercentOfTweetsWithImages() => _tweetData.PercentOfTweetsWithImageUrls;
+        public decimal PercentOfTweetsWithUrls() => _tweetData.PercentOfTweetsWithUrls;
         public int NumberOfTweetsWithEmojis() => _tweetData.NumberOfTweetsWithEmojis;
         public int NumberOfTweetsWithImages() => _tweetData.NumberOfTweetsWithImageUrls;
         public int NumberOfTweetsWithUrls() => _tweetData.NumberOfTweetsWithUrls;
@@ -43,9 +43,9 @@ namespace TweetStatsViewer.Business
         public Dictionary<string, int> GetTopHashtagsForDisplay() => new Dictionary<string, int>(_tweetData.TopHashtags);
         public List<string> GetErrorsForDisplay() => new List<string>(_tweetData.Errors);
         public void AddError(string value) => _tweetData.Errors.Add(value);
-        public void SetPercentOfTweetsWithEmojis(int num) => _tweetData.PercentOfTweetsWithEmojis = num;
-        public void SetPercentOfTweetsWithUrls(int num) => _tweetData.PercentOfTweetsWithUrls = num;
-        public void SetPercentOfTweetsWithImages(int num) => _tweetData.PercentOfTweetsWithImageUrls = num;
+        public void SetPercentOfTweetsWithEmojis(decimal num) => _tweetData.PercentOfTweetsWithEmojis = num;
+        public void SetPercentOfTweetsWithUrls(decimal num) => _tweetData.PercentOfTweetsWithUrls = num;
+        public void SetPercentOfTweetsWithImages(decimal num) => _tweetData.PercentOfTweetsWithImageUrls = num;
         public void SetAverageTweetsPerHour(int num) => _tweetData.AverageTweetsPerHour = num;
         public void SetAverageTweetsPerMinute(int num) => _tweetData.AverageTweetsPerMinute = num;
         public void SetAverageTweetsPerSecond(int num) => _tweetData.AverageTweetsPerSecond = num;

@@ -18,15 +18,15 @@ namespace TweetStatsViewer.Data
 
         public int NumberOfTweetsWithEmojis { get; set; }
 
-        public int PercentOfTweetsWithEmojis { get; set; }
+        public decimal PercentOfTweetsWithEmojis { get; set; }
 
         public int NumberOfTweetsWithUrls { get; set; }
 
-        public int PercentOfTweetsWithUrls { get; set; }
+        public decimal PercentOfTweetsWithUrls { get; set; }
 
         public int NumberOfTweetsWithImageUrls { get; set; }
 
-        public int PercentOfTweetsWithImageUrls { get; set; }
+        public decimal PercentOfTweetsWithImageUrls { get; set; }
 
         public ICollection<Emoji> EmojiLibrary { get; set; }
 

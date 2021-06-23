@@ -28,11 +28,11 @@ namespace TweetStatsViewer.Interfaces
 
         int AverageTweetsPerSecond();
 
-        int PercentOfTweetsWithEmojis();
+        decimal PercentOfTweetsWithEmojis();
 
-        int PercentOfTweetsWithImages();
+        decimal PercentOfTweetsWithImages();
 
-        int PercentOfTweetsWithUrls();
+        decimal PercentOfTweetsWithUrls();
 
         int NumberOfTweetsWithEmojis();
 
@@ -56,11 +56,11 @@ namespace TweetStatsViewer.Interfaces
 
         void AddError(string value);
 
-        void SetPercentOfTweetsWithEmojis(int num);
+        void SetPercentOfTweetsWithEmojis(decimal num);
 
-        void SetPercentOfTweetsWithUrls(int num);
+        void SetPercentOfTweetsWithUrls(decimal num);
 
-        void SetPercentOfTweetsWithImages(int num);
+        void SetPercentOfTweetsWithImages(decimal num);
 
         void SetAverageTweetsPerHour(int num);
 

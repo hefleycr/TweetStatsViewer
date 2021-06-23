@@ -40,11 +40,11 @@ namespace TweetStatsViewer.Business
                         tweetHasImage = _imageUrls.Any(r => url.Contains(r)) || tweetHasImage;
                     }
                     _dataProvider.AddTweetWithUrl();
-                    _dataProvider.SetPercentOfTweetsWithUrls((int)Math.Round(_dataProvider.NumberOfTweetsWithUrls() / (double)_dataProvider.TotalNumberOfTweets() * 100));
+                    _dataProvider.SetPercentOfTweetsWithUrls(_dataProvider.NumberOfTweetsWithUrls() / (decimal)_dataProvider.TotalNumberOfTweets() * 100);
                     if (tweetHasImage)
                     {
                         _dataProvider.AddTweetWithImage();
-                        _dataProvider.SetPercentOfTweetsWithImages((int)Math.Round(_dataProvider.NumberOfTweetsWithImages() / (double)_dataProvider.TotalNumberOfTweets() * 100));
+                        _dataProvider.SetPercentOfTweetsWithImages(_dataProvider.NumberOfTweetsWithImages() / (decimal)_dataProvider.TotalNumberOfTweets() * 100);
                     }
                 }
 
@@ -74,7 +74,7 @@ namespace TweetStatsViewer.Business
                             _dataProvider.AddEmoji(emoji.Short_name);
                         }
                     }
-                    _dataProvider.SetPercentOfTweetsWithEmojis((int)Math.Round(_dataProvider.NumberOfTweetsWithEmojis() / (double)_dataProvider.TotalNumberOfTweets() * 100));
+                    _dataProvider.SetPercentOfTweetsWithEmojis(_dataProvider.NumberOfTweetsWithEmojis() / (decimal)_dataProvider.TotalNumberOfTweets() * 100);
                 }
             }
             catch (Exception)
