@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TweetStatsViewer.Data\TweetStatsViewer.Data.csproj" />
     <ProjectReference Include="..\TweetStatsViewer.Models\TweetStatsViewer.Models.csproj" />
   </ItemGroup>
 

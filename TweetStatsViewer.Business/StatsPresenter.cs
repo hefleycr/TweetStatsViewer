@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using TweetStatsViewer.Interfaces;
@@ -28,21 +27,20 @@ namespace TweetStatsViewer.Business
 
         public void Present()
         {
-            var data = _dataProvider.GetData();
             _displayHandler.Clear();
-            if (data.TotalNumberOfTweets == 0)
+            if (_dataProvider.TotalNumberOfTweets() == 0)
             {
                 _displayHandler.WriteLine("Initializing connection to sample stream...");
             }
             else
             {
-                _displayHandler.WriteLine($"Total number of tweets: {data.TotalNumberOfTweets}");
-                _displayHandler.WriteLine($"Tweets per hour: {data.AverageTweetsPerHour}");
-                _displayHandler.WriteLine($"Tweets per minute: {data.AverageTweetsPerMinute}");
-                _displayHandler.WriteLine($"Tweets per second: {data.AverageTweetsPerSecond}");
-                _displayHandler.WriteLine($"Percent of tweets with emojis: {data.PercentOfTweetsWithEmojis}");
-                _displayHandler.WriteLine($"Percent of tweets with urls: {data.PercentOfTweetsWithUrls}");
-                _displayHandler.WriteLine($"Percent of tweets with images: {data.PercentOfTweetsWithImageUrls}");
+                _displayHandler.WriteLine($"Total number of tweets: {_dataProvider.TotalNumberOfTweets()}");
+                _displayHandler.WriteLine($"Tweets per hour: {_dataProvider.AverageTweetsPerHour()}");
+                _displayHandler.WriteLine($"Tweets per minute: {_dataProvider.AverageTweetsPerMinute()}");
+                _displayHandler.WriteLine($"Tweets per second: {_dataProvider.AverageTweetsPerSecond()}");
+                _displayHandler.WriteLine($"Percent of tweets with emojis: {_dataProvider.PercentOfTweetsWithEmojis()}");
+                _displayHandler.WriteLine($"Percent of tweets with urls: {_dataProvider.PercentOfTweetsWithUrls()}");
+                _displayHandler.WriteLine($"Percent of tweets with images: {_dataProvider.PercentOfTweetsWithImages()}");
                 DisplayList(_dataProvider.GetTopEmojisForDisplay(), "Emojis");
                 DisplayList(_dataProvider.GetTopDomainsForDisplay(), "Domains");
                 DisplayList(_dataProvider.GetTopHashtagsForDisplay(), "Hashtags");

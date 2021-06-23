@@ -1,10 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
-using System.Linq;
 using TweetStatsViewer.Business;
-using TweetStatsViewer.Data;
 using TweetStatsViewer.Interfaces;
+using TweetStatsViewer.Models;
 
 namespace TweetStatsViewer.Tests
 {
@@ -16,12 +15,10 @@ namespace TweetStatsViewer.Tests
         private readonly string _unified_value = "12345";
 
         [TestMethod]
-        public void GivenReceivingFirstAndSecondTweets_SavesStatisticsToData()
+        public void GivenReceivingTwoTweetsWithEmojis_SavesEmojis()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.EmojiLibrary = new List<Models.Emoji>() { new Models.Emoji { Unified = _unified_value, Short_name = "smiley" } };
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
+            _mockDataProvider.Setup(r => r.EmojiLibrary()).Returns(new List<Models.Emoji>() { new Models.Emoji { Unified = _unified_value, Short_name = "smiley" } });
             _underTest = new ReceivedTweetProcessor(_mockDataProvider.Object);
 
             //Act
@@ -29,23 +26,22 @@ namespace TweetStatsViewer.Tests
             _underTest.ProcessTweet("Test tweet message text \U00012345.", null, null);
 
             //Assert
-            Assert.IsTrue(data.TopEmojis.Count > 0 && data.TopEmojis["smiley"] == 2);
+            _mockDataProvider.Verify(r => r.AddEmoji(It.IsAny<string>()), Times.Exactly(2));
         }
 
         [TestMethod]
         public void GivenReceivingFirstTweetBeforeLoadingEmojiLibrary_LogsError()
         {
             //Arrange
-            var data = TweetDataSingleton.Instance;
-            data.EmojiLibrary = null;
-            _mockDataProvider.Setup(r => r.GetData()).Returns(data);
+            ICollection<Emoji> lib = null;
+            _mockDataProvider.Setup(r => r.EmojiLibrary()).Returns(lib);
             _underTest = new ReceivedTweetProcessor(_mockDataProvider.Object);
 
             //Act
             _underTest.ProcessTweet("Test tweet message text.", null, null);
 
             //Assert
-            Assert.IsTrue(data.Errors.Count > 0 && data.Errors.First() == "Emoji lookup has not been loaded.");
+            _mockDataProvider.Verify(r => r.AddError(It.IsAny<string>()), Times.Once());
         }
     }
 }

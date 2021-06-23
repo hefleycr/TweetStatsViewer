@@ -2,7 +2,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
 using TweetStatsViewer.Business;
-using TweetStatsViewer.Data;
 using TweetStatsViewer.Interfaces;
 
 namespace TweetStatsViewer.Tests
@@ -17,8 +16,7 @@ namespace TweetStatsViewer.Tests
         [TestInitialize]
         public void Initialize()
         {
-            TweetDataSingleton.Instance.TotalNumberOfTweets = 1;
-            _mockDataProvider.Setup(r => r.GetData()).Returns(TweetDataSingleton.Instance);
+            _mockDataProvider.Setup(r => r.TotalNumberOfTweets()).Returns(1);
             _mockDataProvider.Setup(r => r.GetTopEmojisForDisplay()).Returns(new Dictionary<string, int>());
             _mockDataProvider.Setup(r => r.GetTopDomainsForDisplay()).Returns(new Dictionary<string, int>());
             _mockDataProvider.Setup(r => r.GetTopHashtagsForDisplay()).Returns(new Dictionary<string, int>());
@@ -42,7 +40,7 @@ namespace TweetStatsViewer.Tests
         public void GivenTweetCountZeroNoErrors_WritingOneLineToOutput()
         {
             //Arrange
-            TweetDataSingleton.Instance.TotalNumberOfTweets = 0;
+            _mockDataProvider.Setup(r => r.TotalNumberOfTweets()).Returns(0);
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 
             //Act
@@ -56,7 +54,7 @@ namespace TweetStatsViewer.Tests
         public void GivenTweetCountZeroOneError_WritingTwoLinesToOutput()
         {
             //Arrange
-            TweetDataSingleton.Instance.TotalNumberOfTweets = 0;
+            _mockDataProvider.Setup(r => r.TotalNumberOfTweets()).Returns(0);
             _mockDataProvider.Setup(r => r.GetErrorsForDisplay()).Returns(new List<string>() { { "Error" } });
             _underTest = new StatsPresenter(_mockDataProvider.Object, _mockDisplayHandler.Object);
 

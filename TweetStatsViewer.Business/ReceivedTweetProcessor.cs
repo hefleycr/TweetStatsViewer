@@ -19,14 +19,13 @@ namespace TweetStatsViewer.Business
 
         public void ProcessTweet(string text, IEnumerable<string> urls, IEnumerable<string> hashtags)
         {
-            var data = _dataProvider.GetData();
             try
             {
-                var timeSpan = DateTime.UtcNow - data.InstanceCreatedAtUtc;
-                data.TotalNumberOfTweets++;
-                data.AverageTweetsPerSecond = (int)Math.Round(data.TotalNumberOfTweets / timeSpan.TotalSeconds);
-                data.AverageTweetsPerMinute = (int)Math.Round(data.TotalNumberOfTweets / timeSpan.TotalMinutes);
-                data.AverageTweetsPerHour = (int)Math.Round(data.TotalNumberOfTweets / timeSpan.TotalHours);
+                var timeSpan = DateTime.UtcNow - _dataProvider.InstanceCreatedAtUtc();
+                _dataProvider.AddTweet();
+                _dataProvider.SetAverageTweetsPerSecond((int)Math.Round(_dataProvider.TotalNumberOfTweets() / timeSpan.TotalSeconds));
+                _dataProvider.SetAverageTweetsPerMinute((int)Math.Round(_dataProvider.TotalNumberOfTweets() / timeSpan.TotalMinutes));
+                _dataProvider.SetAverageTweetsPerHour((int)Math.Round(_dataProvider.TotalNumberOfTweets() / timeSpan.TotalHours));
 
                 if (urls != null)
                 {
@@ -36,16 +35,16 @@ namespace TweetStatsViewer.Business
                         if (Regex.IsMatch(url, _domainRegex))
                         {
                             var domain = Regex.Match(url, _domainRegex).Groups[2].Value;
-                            AddEntry(data.TopDomains, domain);
+                            _dataProvider.AddDomain(domain);
                         }
                         tweetHasImage = _imageUrls.Any(r => url.Contains(r)) || tweetHasImage;
                     }
-                    data.NumberOfTweetsWithUrls++;
-                    data.PercentOfTweetsWithUrls = (int)Math.Round(data.NumberOfTweetsWithUrls / (double)data.TotalNumberOfTweets * 100);
+                    _dataProvider.AddTweetWithUrl();
+                    _dataProvider.SetPercentOfTweetsWithUrls((int)Math.Round(_dataProvider.NumberOfTweetsWithUrls() / (double)_dataProvider.TotalNumberOfTweets() * 100));
                     if (tweetHasImage)
                     {
-                        data.NumberOfTweetsWithImageUrls++;
-                        data.PercentOfTweetsWithImageUrls = (int)Math.Round(data.NumberOfTweetsWithImageUrls / (double)data.TotalNumberOfTweets * 100);
+                        _dataProvider.AddTweetWithImage();
+                        _dataProvider.SetPercentOfTweetsWithImages((int)Math.Round(_dataProvider.NumberOfTweetsWithImages() / (double)_dataProvider.TotalNumberOfTweets() * 100));
                     }
                 }
 
@@ -53,15 +52,15 @@ namespace TweetStatsViewer.Business
                 {
                     foreach (var hashtag in hashtags)
                     {
-                        AddEntry(data.TopHashtags, hashtag);
+                        _dataProvider.AddHashtag(hashtag);
                     }
                 }
 
-                var emojis = data.EmojiLibrary;
+                var emojis = _dataProvider.EmojiLibrary();
 
                 if (emojis == null)
                 {
-                    data.Errors.Add("Emoji lookup has not been loaded.");
+                    _dataProvider.AddError("Emoji lookup has not been loaded.");
                 }
                 else
                 {
@@ -71,28 +70,16 @@ namespace TweetStatsViewer.Business
                         string result = char.ConvertFromUtf32(value).ToString();
                         if (Regex.IsMatch(text, result))
                         {
-                            data.NumberOfTweetsWithEmojis++;
-                            AddEntry(data.TopEmojis, emoji.Short_name);
+                            _dataProvider.AddTweetWithEmoji();
+                            _dataProvider.AddEmoji(emoji.Short_name);
                         }
                     }
-                    data.PercentOfTweetsWithEmojis = (int)Math.Round(data.NumberOfTweetsWithEmojis / (double)data.TotalNumberOfTweets * 100);
+                    _dataProvider.SetPercentOfTweetsWithEmojis((int)Math.Round(_dataProvider.NumberOfTweetsWithEmojis() / (double)_dataProvider.TotalNumberOfTweets() * 100));
                 }
             }
             catch (Exception)
             {
-                data.Errors.Add("Unknown error occurred processing tweet.");
-            }
-        }
-
-        private void AddEntry(IDictionary<string, int> list, string value)
-        {
-            if (list.ContainsKey(value))
-            {
-                list[value]++;
-            }
-            else
-            {
-                list.Add(value, 1);
+                _dataProvider.AddError("Unknown error occurred processing tweet.");
             }
         }
     }

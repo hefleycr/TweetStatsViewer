@@ -3,7 +3,6 @@ using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using TweetStatsViewer.Business;
-using TweetStatsViewer.Data;
 using TweetStatsViewer.Interfaces;
 
 namespace TweetStatsViewer.Tests
@@ -35,7 +34,7 @@ namespace TweetStatsViewer.Tests
 
             //Assert
             _mockFileReader.Verify(mock => mock.GetEmojisFromFile(It.IsAny<string>()), Times.Once());
-            Assert.IsTrue(_underTest.GetData().EmojiLibrary.FirstOrDefault()?.Unified == _unified_value);
+            Assert.IsTrue(_underTest.EmojiLibrary().FirstOrDefault()?.Unified == _unified_value);
         }
     }
 }
