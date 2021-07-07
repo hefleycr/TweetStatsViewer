@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using TweetStatsViewer.Business;
+using TweetStatsViewer.Business.CollectionProcessors;
 using TweetStatsViewer.Interfaces;
 
 namespace TweetStatsViewer.Terminal
@@ -19,6 +20,9 @@ namespace TweetStatsViewer.Terminal
                 .AddSingleton<IConfigurationLoader, ConfigurationLoader>()
                 .AddSingleton<IReceivedTweetProcessor, ReceivedTweetProcessor>()
                 .AddSingleton<IDisplayHandler, DisplayHandler>()
+                .AddSingleton<ICollectionProcessor, EmojiCollectionProcessor>()
+                .AddSingleton<ICollectionProcessor, DomainCollectionProcessor>()
+                .AddSingleton<ICollectionProcessor, HashtagCollectionProcessor>()
                 .BuildServiceProvider();
 
             var apiConsumer = serviceProvider.GetService<ITwitterApiConsumer>();

@@ -1,18 +1,17 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Collections.Generic;
-using TweetStatsViewer.Business;
+using TweetStatsViewer.Business.CollectionProcessors;
 using TweetStatsViewer.Interfaces;
 using TweetStatsViewer.Models;
 
 namespace TweetStatsViewer.Tests
 {
     [TestClass]
-    public class ReceivedTweetProcessorTests
+    public class EmojiCollectionProcessorTests
     {
-        private ReceivedTweetProcessor _underTest;
+        private EmojiCollectionProcessor _underTest;
         private Mock<ITweetDataProvider> _mockDataProvider = new Mock<ITweetDataProvider>();
-        private Mock<IEnumerable<ICollectionProcessor>> _mockCollectionProcessor = new Mock<IEnumerable<ICollectionProcessor>>();
         private readonly string _unified_value = "12345";
 
         [TestInitialize]
@@ -26,18 +25,17 @@ namespace TweetStatsViewer.Tests
         }
 
         [TestMethod]
-        public void GivenReceivingFirstTweetBeforeLoadingEmojiLibrary_LogsError()
+        public void GivenReceivingTwoTweetsWithEmojis_SavesEmojis()
         {
             //Arrange
-            ICollection<Emoji> lib = null;
-            _mockDataProvider.Setup(r => r.EmojiLibrary()).Returns(lib);
-            _underTest = new ReceivedTweetProcessor(_mockDataProvider.Object, _mockCollectionProcessor.Object);
+            _underTest = new EmojiCollectionProcessor(_mockDataProvider.Object);
 
             //Act
-            _underTest.ProcessTweet("Test tweet message text.", null, null);
+            _underTest.ProcessTweet("Test tweet message text \U00012345.", null, null);
+            _underTest.ProcessTweet("Test tweet message text \U00012345.", null, null);
 
             //Assert
-            _mockDataProvider.Verify(r => r.AddError(It.IsAny<string>()), Times.Once());
+            _mockDataProvider.Verify(r => r.AddEmoji(It.IsAny<string>()), Times.Exactly(2));
         }
     }
 }
